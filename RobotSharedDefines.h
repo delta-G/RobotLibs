@@ -33,7 +33,7 @@ enum DriveModeEnum {
 
 #define XBOX_RAW_BUFFER_SIZE 14
 
-#define ROBOT_DATA_DUMP_SIZE 21
+#define ROBOT_DATA_DUMP_SIZE 22
 
 #define ROBOT_IP 192, 168, 1, 75
 #define ROBOT_PORT 1234
@@ -142,5 +142,7 @@ enum DriveModeEnum {
 #define ARM_BAD_EEPROM 			"<ARM_EEPROM_BAD>"
 #define ARM_INIT_COMPLETE 		"<ARM_GOOD>"
 #define ARM_CONNECT_RESPONSE	"<ARM_CONNECTED>"
+
+#define ARM_NO_NEW_DATA			"<nr>"
 
 #endif /* ROBOT_SHARED_DEFINES_H_ */

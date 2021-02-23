@@ -198,6 +198,11 @@ boolean Joint::run() {
 	return (position == target);
 }
 
+ServoCalibrationStruct Joint::getCalibrationStruct(){
+	ServoCalibrationStruct retval = calibration;
+	return retval;
+}
+
 int Joint::saveCalibration(int aAddress){
 	return calibration.saveCalibration(aAddress);
 }

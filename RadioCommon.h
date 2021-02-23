@@ -32,8 +32,7 @@
 
 #include <RobotSharedDefines.h>
 
-#define DEBUG_OUT Serial
-
+//#define DEBUG_OUT Serial
 #ifdef DEBUG_OUT
 #define DEBUG(x) DEBUG_OUT.println(x)
 #else

@@ -81,11 +81,11 @@ public:
 	float setTargetAngle(float);
 	float setTargetAngle(float, uint16_t);
 
-
 	void stop();
 
 	boolean run();
 
+	ServoCalibrationStruct getCalibrationStruct();
 	int saveCalibration(int);
 	int loadCalibration(int);
 	int saveState(int);

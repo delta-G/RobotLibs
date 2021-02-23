@@ -32,11 +32,11 @@ PingTimer::PingTimer(){
 void PingTimer::begin() {
 	initTimer();
 	// ATMEGA328P
-//	pinMode((byte)8, INPUT);
-//	pinMode((byte)9, OUTPUT);
+//	pinMode(8, INPUT);
+//	pinMode(9, OUTPUT);
 	// ATMEGA1284P
-	pinMode((byte) 14, INPUT);
-	pinMode((byte) 13, OUTPUT);
+	pinMode(14, INPUT);
+	pinMode(13, OUTPUT);
 }
 
 

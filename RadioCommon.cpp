@@ -135,6 +135,11 @@ void flush() {
 
 void handleConfigString(char *p) {
 	switch (p[2]) {
+	case 'I': {
+		uint32_t val = strtoul(p+3, NULL, 10);
+		maxFlushInterval = val;
+		break;
+	}
 	case 'M': {
 		switch (p[3]) {
 		case '0':
@@ -159,24 +164,33 @@ void handleConfigString(char *p) {
 	case 'B': {
 		// set bandwidth to  option: 7800,10400,15600,20800,31250,41700,62500,125000,250000,500000
 		//  sketchy if below 62500 although I hear 31250 works ok sometimes
+		//  higher bandwidth is faster and more efficient but shorter range and more congestion
+		//  Each doubling of bandwidth is 3dB reduction in link budget
 		uint32_t entry = atoi((const char*) (p + 3));
 		radio.setSignalBandwidth(entry);
 		break;
 	}
 	case 'S': {
 		// set spreading factor 6 - 12
+		// Each step up doubles time per character
+		// and gives 2.5dB of extra link budget
 		uint8_t entry = atoi((const char*) (p + 3));
-		if (entry > 3) {
-			entry = 3;
+		if (entry < 6) {
+			entry = 6;
+		} else if (entry > 12) {
+			entry = 12;
 		}
 		radio.setSpreadingFactor(entry);
 		break;
 	}
 	case 'C': {
 		// set coding Rate Denominator 5 - 8
+		// larger is slower but more reliable.
 		uint8_t entry = atoi((const char*) (p + 3));
-		if (entry > 3) {
-			entry = 3;
+		if (entry < 5) {
+			entry = 5;
+		} else if (entry > 8) {
+			entry = 8;
 		}
 		radio.setCodingRate4(entry);
 		break;
@@ -202,20 +216,20 @@ void resetRadio() {
 	delay(10);
 
 	while (!radio.init()) {
-		DEBUG("LoRa radio init failed");
+//		DEBUG("LoRa radio init failed");
 		while (1)
 			;
 	}
-	DEBUG("LoRa radio init OK!");
+//	DEBUG("LoRa radio init OK!");
 
 	// Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
 	if (!radio.setFrequency(RF95_FREQ)) {
-		DEBUG("setFrequency failed");
+//		DEBUG("setFrequency failed");
 		while (1)
 			;
 	}
-	DEBUG("Set Freq to: ");
-	DEBUG(RF95_FREQ);
+//	DEBUG("Set Freq to: ");
+//	DEBUG(RF95_FREQ);
 
 	radio.setTxPower(23, false);
 
