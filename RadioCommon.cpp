@@ -65,6 +65,7 @@ void handleOutput(){
 void processRadioBuffer(uint8_t *aBuf, uint8_t aLen) {
 
 	static boolean receiving = false;
+	static boolean receivingRaw = false;
 	static char commandBuffer[100];
 	static int index;
 
@@ -79,19 +80,27 @@ void processRadioBuffer(uint8_t *aBuf, uint8_t aLen) {
 	for (int i = 0; i < len; i++) {
 		char c = aBuf[i];
 
-		if (c == START_OF_PACKET) {
-			if ((aBuf[i + 1] >= 0x11) && (aBuf[i + 1] <= 0x14)) {
-				handleRawRadio(&aBuf[i]);
-				i += (aBuf[i + 2] - 1);
-				continue;
-			}
+		if (c == START_OF_PACKET){
 			receiving = true;
 			index = 0;
 			commandBuffer[0] = 0;
 		}
 		if (receiving) {
-			commandBuffer[index] = c;
-			commandBuffer[++index] = 0;
+			commandBuffer[index++] = c;
+			if(receivingRaw){
+				if(index == (commandBuffer[2])){
+					// index 2 is the length of the raw command
+					// so we've received a whole raw command
+					handleRawRadio((byte*)commandBuffer);
+					receivingRaw = false;
+					receiving = false;
+				}
+				continue; // skip the rest of the for loop, it's for ascii commands.
+			}
+			if((index == 2)&&((commandBuffer[1]>=0x11) && (commandBuffer[1]<=0x14))){
+				receivingRaw = true;
+			}
+			commandBuffer[index] = 0;
 			if (index >= 100) {
 				index--;
 			}
@@ -100,6 +109,35 @@ void processRadioBuffer(uint8_t *aBuf, uint8_t aLen) {
 				handleRadioCommand(commandBuffer);
 			}
 		}
+
+
+
+//////  This code below will have a problem if for some reason we only get a partial packet.
+		///  I think this may be part of the source of the reliability issues we've been having
+
+
+
+//		if (c == START_OF_PACKET) {
+//			if ((aBuf[i + 1] >= 0x11) && (aBuf[i + 1] <= 0x14)) {
+//				handleRawRadio(&aBuf[i]);
+//				i += (aBuf[i + 2] - 1);
+//				continue;
+//			}
+//			receiving = true;
+//			index = 0;
+//			commandBuffer[0] = 0;
+//		}
+//		if (receiving) {
+//			commandBuffer[index] = c;
+//			commandBuffer[++index] = 0;
+//			if (index >= 100) {
+//				index--;
+//			}
+//			if (c == END_OF_PACKET) {
+//				receiving = false;
+//				handleRadioCommand(commandBuffer);
+//			}
+//		}
 	}
 }
 
