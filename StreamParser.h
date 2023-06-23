@@ -24,14 +24,14 @@ StreamParser   --  Parses any Stream object for data with end markers.
 #include "Arduino.h"
 
 #ifndef STREAMPARSER_BUFFER_SIZE
-#define STREAMPARSER_BUFFER_SIZE 100
+#define STREAMPARSER_BUFFER_SIZE 64
 #endif
 
 
 class StreamParser {
 
 private:
-	char buffer[STREAMPARSER_BUFFER_SIZE];
+	char _SPbuffer[STREAMPARSER_BUFFER_SIZE];
 	int index;
 
 	Stream* in;

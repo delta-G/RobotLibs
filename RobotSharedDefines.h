@@ -18,7 +18,6 @@ enum DriveModeEnum {
 	NUMBER_OF_MODES
 };
 
-
 /////////////   BOOT TIMING
 
 #define RMB_BOOT_INIT_WAIT 3000
@@ -31,9 +30,13 @@ enum DriveModeEnum {
 #define START_OF_PACKET '<'
 #define END_OF_PACKET '>'
 
+#define RADIO_BUFFER_SIZE 64
+
 #define XBOX_RAW_BUFFER_SIZE 14
 
 #define ROBOT_DATA_DUMP_SIZE 22
+
+#define ARM_DUMP_SIZE 22
 
 #define ROBOT_IP 192, 168, 1, 75
 #define ROBOT_PORT 1234
@@ -125,6 +128,7 @@ enum DriveModeEnum {
 
 
 #define RMB_STARTUP_STRING 		"<E-RMB-Active>"
+#define RMB_START_RESPONSE		"<RMB-Responds>"
 #define HBOR_STRING     		"<RMB HBoR>"
 #define HEARTBEAT_STRING		"<RMB HB>"
 
@@ -144,5 +148,9 @@ enum DriveModeEnum {
 #define ARM_CONNECT_RESPONSE	"<ARM_CONNECTED>"
 
 #define ARM_NO_NEW_DATA			"<nr>"
+#define ARM_MOVEMENT_DONE		"<ARM_MD>"
+#define ARM_MOVING		"<AM>"
+#define ARM_READY		"<AR>"
+
 
 #endif /* ROBOT_SHARED_DEFINES_H_ */

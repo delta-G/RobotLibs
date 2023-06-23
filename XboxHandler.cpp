@@ -42,7 +42,6 @@ boolean XboxHandler::newDataAvailable(){
 void XboxHandler::handleIncoming(uint8_t *aPacket) {
 	//check control codes
 	if (aPacket[0] == 0x14 && aPacket[1] == 0x0D) {
-
 		readUnion.values.checkBytes =
 				(((uint16_t) aPacket[0] << 8) | aPacket[1]);
 		readUnion.values.buttonState = (((uint16_t) aPacket[2] << 8)

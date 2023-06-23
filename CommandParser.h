@@ -23,10 +23,6 @@ CommandParser  --  allows for easy setup of single letter text commands to
 
 #include <Arduino.h>
 
-#ifndef COM_PARSER_MAX_COMMAND_LENGTH
-#define COM_PARSER_MAX_COMMAND_LENGTH 50
-#endif
-
 typedef void (*commandFunc)(char*);
 
 struct Command {
@@ -43,10 +39,6 @@ struct Command {
 class CommandParser {
 
 private:
-	char inputBuffer[COM_PARSER_MAX_COMMAND_LENGTH + 1];
-	uint8_t index = 0;
-	boolean receiving = false;
-
 	Command* commands;
 	uint8_t numCommands;
 

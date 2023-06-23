@@ -39,18 +39,15 @@
 #define DEBUG(x)
 #endif
 
-#define HOLDING_BUFFER_SIZE 248
-
-#define RFM95_CS 10
-#define RFM95_RST 9
-#define RFM95_INT 2
+#define HOLDING_BUFFER_SIZE 64
 
 #define RF95_FREQ 915.0
 
 //  This currently works out to 251  (255 buffer size - 4 byte header)
 #define MAX_MESSAGE_SIZE_RH RH_RF95_MAX_MESSAGE_LEN
+//#define MAX_MESSAGE_SIZE_RH HOLDING_BUFFER_SIZE
 
-void initRadio();
+void initRadio(uint8_t);
 
 void listenToRadio();
 void handleOutput();

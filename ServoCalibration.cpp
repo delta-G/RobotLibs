@@ -21,20 +21,23 @@ ServoCalibration.cpp   Some helper functions for turning servo positions into an
 
 #include"ServoCalibration.h"
 
-uint16_t ServoCalibrationStruct::angleToMicros(float angle){
+uint16_t ServoCalibrationStruct::angleToMicros(float angle) {
 	uint16_t retval = 0;
 
 //	Serial.print("<ATM,");
 //	Serial.print(angle,3);
 //	Serial.print(",");
+	if (minimumAngle == maximumAngle) {
+		retval = maximumMicros;
+	} else {
 
+		// constrain the angle
+		angle = constrainAngle(angle);
 
-	// constrain the angle
-	angle = constrainAngle(angle);
+		float ratio = (angle - minimumAngle) / (maximumAngle - minimumAngle);
 
-	float ratio = (angle - minimumAngle) / (maximumAngle - minimumAngle);
-
-	retval =  (ratio * (maximumMicros - minimumMicros)) + minimumMicros;
+		retval = (ratio * (maximumMicros - minimumMicros)) + minimumMicros;
+	}
 
 //	Serial.print(ratio,3);
 //	Serial.print(",");
@@ -44,14 +47,19 @@ uint16_t ServoCalibrationStruct::angleToMicros(float angle){
 	return retval;
 }
 
-float ServoCalibrationStruct:: microsToAngle(uint16_t aMicros){
+float ServoCalibrationStruct::microsToAngle(uint16_t aMicros) {
 
 	float retval = 0.0;
 
-	aMicros = constrainMicros(aMicros);
+	if (minimumMicros == maximumMicros) {
+		retval = maximumAngle;
+	} else {
 
-	float ratio = (float)(aMicros - minimumMicros) / (float)(maximumMicros - minimumMicros);
-	retval = (ratio * (maximumAngle - minimumAngle)) + minimumAngle;
+		aMicros = constrainMicros(aMicros);
+
+		float ratio = (float) (aMicros - minimumMicros)	/ (float) (maximumMicros - minimumMicros);
+		retval = (ratio * (maximumAngle - minimumAngle)) + minimumAngle;
+	}
 
 	return retval;
 }

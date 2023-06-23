@@ -26,9 +26,9 @@ Joint.h
 #include <EepromFuncs.h>
 
 #include <ServoCalibration.h>
-#include "SpacePoint.h"
+//#include "SpacePoint.h"
 
-XYpoint solveTriangle (float aAngle, uint16_t aLength);
+//XYpoint solveTriangle (float aAngle, uint16_t aLength);
 
 class Joint : public Servo {
 
@@ -69,6 +69,9 @@ public:
 	uint16_t getLength();
 	void setLength(uint16_t);
 
+	uint16_t getOffset();
+	void setOffset(uint16_t);
+
 	boolean isMoving();
 
 	uint16_t setTarget(uint16_t);
@@ -96,9 +99,9 @@ public:
 
 	void advance(int);
 
-	XYandAngle findEndXY(XYpoint aPivot, float aAngle);
-	XYandAngle findEndXY(XYandAngle aPivot);
-	XYandAngle findEndXY(XYandAngle aPivot, float aPosition);
+//	XYandAngle findEndXY(XYpoint aPivot, float aAngle);
+//	XYandAngle findEndXY(XYandAngle aPivot);
+//	XYandAngle findEndXY(XYandAngle aPivot, float aPosition);
 
 
 };

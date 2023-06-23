@@ -113,6 +113,14 @@ void Joint::setLength(uint16_t aLength){
 	length = aLength;
 }
 
+uint16_t Joint::getOffset(){
+	return offset;
+}
+
+void Joint::setOffset(uint16_t aOffset){
+	offset = aOffset;
+}
+
 uint16_t Joint::setTarget(uint16_t aTarget){
 	aTarget = calibration.constrainMicros(aTarget);
 	target = aTarget;
@@ -336,6 +344,8 @@ arm facing forwards.
 // then you can combine that with data from base servo later and calculate actual xyz.
 
 //  Find end of hypotenuse from angle at 0,0
+
+/*
 XYpoint solveTriangle (float aAngle, uint16_t aLength){
 	XYpoint retval = {0,0};
 	retval.x = cos(aAngle) * aLength;
@@ -405,3 +415,5 @@ XYandAngle Joint::findEndXY(XYandAngle aPivot, float aPosition){
 		return retval;
 
 }
+
+*/

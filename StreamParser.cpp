@@ -38,27 +38,28 @@ void StreamParser::run() {
 void StreamParser::handleChar(char c) {
 	if (receivingRaw) {
 		handleRawData(c);
-	}
-
-	if (c == sop) {
-		receiving = true;
-		index = 0;
-		buffer[0] = 0;
-	}
-	if (receiving) {
-		buffer[index] = c;
-		buffer[++index] = 0;
-		if ((index == 3) && (buffer[1] >= 0x11) && (buffer[1] <= 0x14)) {
-			receivingRaw = true;
-			receiving = false;
-			return;
+	} else {
+		if (c == sop) {
+			receiving = true;
+			index = 0;
+			_SPbuffer[0] = 0;
 		}
-		if (index >= STREAMPARSER_BUFFER_SIZE) {
-			index--;
-		}
-		if (c == eop) {
-			receiving = false;
-			callback(buffer);
+		if (receiving) {
+			_SPbuffer[index] = c;
+			_SPbuffer[++index] = 0;
+			if ((index == 3) && (_SPbuffer[1] >= 0x11)
+					&& (_SPbuffer[1] <= 0x14)) {
+				receivingRaw = true;
+				receiving = false;
+				return;
+			}
+			if (index >= STREAMPARSER_BUFFER_SIZE - 1) {
+				index--;
+			}
+			if (c == eop) {
+				receiving = false;
+				callback(_SPbuffer);
+			}
 		}
 	}
 }
@@ -67,14 +68,18 @@ void StreamParser::handleRawData(char c) {
 
 	// To get here we already have < and the code and the number of bytes in the buffer
 
-	int numBytes = buffer[2];
+	int numBytes = _SPbuffer[2];
+	if(numBytes >= STREAMPARSER_BUFFER_SIZE){
+		receivingRaw = false;
+		return;
+	}
 
-	buffer[index] = c;
-	buffer[++index] = 0;  // why not null terminate
+	_SPbuffer[index] = c;
+	_SPbuffer[++index] = 0;  // why not null terminate
 
 	if (index >= numBytes) {
 		receivingRaw = false;
-		rawCallback(buffer);
+		rawCallback(_SPbuffer);
 	}
 
 }

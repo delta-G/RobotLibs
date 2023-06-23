@@ -35,17 +35,20 @@ uint8_t holdingSize = 0;
 uint32_t lastFlushTime;
 uint32_t maxFlushInterval = 10000;
 
-void initRadio(){
-	pinMode(RFM95_RST, OUTPUT);
-	digitalWrite(RFM95_RST, HIGH);
+uint8_t resetPin = -1;
 
+void initRadio(uint8_t aResetPin){
+	resetPin = aResetPin;
+	pinMode(resetPin, OUTPUT);
+	digitalWrite(resetPin, HIGH);
 }
 
 void listenToRadio() {
 	if (radio.available()) {
 
-		uint8_t buf[MAX_MESSAGE_SIZE_RH] = { 0 };
-		uint8_t len = sizeof(buf);
+		static uint8_t buf[MAX_MESSAGE_SIZE_RH] = { 0 };
+		memset(buf, 0, MAX_MESSAGE_SIZE_RH);
+		uint8_t len = MAX_MESSAGE_SIZE_RH;
 
 		if (radio.recv(buf, &len)) {
 			processRadioBuffer(buf, len);
@@ -66,7 +69,7 @@ void processRadioBuffer(uint8_t *aBuf, uint8_t aLen) {
 
 	static boolean receiving = false;
 	static boolean receivingRaw = false;
-	static char commandBuffer[100];
+	static char commandBuffer[64];
 	static int index;
 
 //	flushOnNextRaw = true;
@@ -80,7 +83,7 @@ void processRadioBuffer(uint8_t *aBuf, uint8_t aLen) {
 	for (int i = 0; i < len; i++) {
 		char c = aBuf[i];
 
-		if (c == START_OF_PACKET){
+		if (c == START_OF_PACKET && !receivingRaw){
 			receiving = true;
 			index = 0;
 			commandBuffer[0] = 0;
@@ -101,7 +104,7 @@ void processRadioBuffer(uint8_t *aBuf, uint8_t aLen) {
 				receivingRaw = true;
 			}
 			commandBuffer[index] = 0;
-			if (index >= 100) {
+			if (index >= HOLDING_BUFFER_SIZE) {
 				index--;
 			}
 			if (c == END_OF_PACKET) {
@@ -109,41 +112,12 @@ void processRadioBuffer(uint8_t *aBuf, uint8_t aLen) {
 				handleRadioCommand(commandBuffer);
 			}
 		}
-
-
-
-//////  This code below will have a problem if for some reason we only get a partial packet.
-		///  I think this may be part of the source of the reliability issues we've been having
-
-
-
-//		if (c == START_OF_PACKET) {
-//			if ((aBuf[i + 1] >= 0x11) && (aBuf[i + 1] <= 0x14)) {
-//				handleRawRadio(&aBuf[i]);
-//				i += (aBuf[i + 2] - 1);
-//				continue;
-//			}
-//			receiving = true;
-//			index = 0;
-//			commandBuffer[0] = 0;
-//		}
-//		if (receiving) {
-//			commandBuffer[index] = c;
-//			commandBuffer[++index] = 0;
-//			if (index >= 100) {
-//				index--;
-//			}
-//			if (c == END_OF_PACKET) {
-//				receiving = false;
-//				handleRadioCommand(commandBuffer);
-//			}
-//		}
 	}
 }
 
 
 void addToHolding(uint8_t *p, uint8_t aSize) {
-	if (HOLDING_BUFFER_SIZE - holdingSize < aSize) {
+	if (HOLDING_BUFFER_SIZE - holdingSize <= aSize) {
 		//  Not enough room so clear the buffer now
 		flush();
 	}
@@ -248,9 +222,9 @@ void handleConfigString(char *p) {
 void resetRadio() {
 
 	// manual reset
-	digitalWrite(RFM95_RST, LOW);
+	digitalWrite(resetPin, LOW);
 	delay(10);
-	digitalWrite(RFM95_RST, HIGH);
+	digitalWrite(resetPin, HIGH);
 	delay(10);
 
 	while (!radio.init()) {
